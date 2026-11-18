@@ -81,3 +81,33 @@ export async function fetchHistory(symbol, days) {
     return "network";
   }
 }
+
+
+// 
+export async function request(path, options = {}) {
+  let controller = new AbortController();
+  let timer = setTimeout(() => controller.abort(), 7000);
+
+  try {
+    let res = await fetch(`http://localhost:3000${path}`, {
+      method: options.method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: options.body,
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      return { is_resolved: false, resultat: "error fetching data" };
+    }
+
+    let json = await res.json();
+    return { is_resolved: true, resultat: json };
+
+  } catch (er) {
+    return { is_resolved: false, resultat: er };
+  } finally {
+    clearTimeout(timer);
+  }
+}
