@@ -116,12 +116,24 @@ export function endLoadingStatus(metals, fetched) {
   }
 }
 
-// add a title on top of the metals cards
-export function addMetalsTitle(cardsSection) {
-  if (cardsSection.parentElement.querySelector("h2")) return;
-  let el = document.createElement("h2");
-  el.textContent = "Cours du jour";
-  cardsSection.parentElement.prepend(el);
+// create and insert the status header if missing
+export function statusHeaderLoading() {
+  if (document.querySelector("#status")) return;
+
+  let status = document.createElement("div");
+  status.id = "status";
+  status.className = "status loading";
+  status.innerHTML = `
+    <span class="rotatedcircle"></span>
+    <span id="status-text">Chargement en cours…</span>
+    <button id="retry" type="button" hidden>Réessayer</button>
+  `;
+  let header = document.querySelector(".topbar");
+  if (header) {
+    header.after(status);
+  } else {
+    document.body.prepend(status);
+  }
 }
 
 // the chart header
@@ -270,4 +282,72 @@ export async function estimate(currency) {
   let val = Math.round(weight * m.price * 100) / 100;
 
   result.textContent = `Valeur estimée : ${val} ${m.currency}`;
+}
+
+// market price page
+export function marketPricePage() {
+  let section = document.querySelector(".oryven");
+  if (!section) {
+    section = document.createElement("section");
+    section.className = "oryven";
+    let cards = document.createElement("div");
+    cards.id = "cards";
+    cards.className = "cards";
+    let container = document.createElement("div");
+    container.className = "container";
+    section.append(cards, container);
+  }
+  return section;
+}
+
+// catalogue page
+export function cataloguePage() {
+  let a = document.createElement("div");
+
+  a.innerHTML = `
+<section id="catalogue-page">
+  <header class="catalogue-header">
+    <button id="add-product">Ajouter un article</button>
+  </header>
+
+  <div class="catalogue-controls">
+    <input type="search" id="search-product"
+      placeholder="Rechercher un article..." />
+
+    <select id="filter-status">
+      <option value="all">Tous les statuts</option>
+      <option value="available">Disponible</option>
+      <option value="reserved">Réservé</option>
+    </select>
+
+    <select id="sort-products">
+      <option value="title">Trier par titre</option>
+      <option value="price">Trier par prix</option>
+      <option value="date">Trier par date</option>
+    </select>
+  </div>
+
+  <div id="products-list"></div>
+  <p id="catalogue-status"></p>
+
+  <dialog id="product-modal">
+    <form id="product-form">
+      <h3 id="form-title">Ajouter un article</h3>
+      <input id="product-title" type="text" placeholder="Titre" required />
+      <textarea id="product-description" placeholder="Description" required></textarea>
+      <input id="product-price" type="number" placeholder="Prix" required />
+      <button type="submit">Enregistrer</button>
+      <button type="button" id="cancel-product">Annuler</button>
+    </form>
+  </dialog>
+
+  <dialog id="delete-modal">
+    <p>Tu veux vraiment supprimer cet article ?</p>
+    <button id="confirm-delete">Confirmer</button>
+    <button type="button" id="cancel-delete">Annuler</button>
+  </dialog>
+</section>
+`;
+
+  return a;
 }

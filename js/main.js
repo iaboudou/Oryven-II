@@ -1,12 +1,9 @@
 import { fetchHistory, fetchMetals } from "./fetch.js";
-import { startLoadingStatus, endLoadingStatus, metalCard, addMetalsTitle, chartbase, renderHistoryChart, estamateHTML, estimate } from "./componants.js";
-
-let container = document.querySelector(".container");
-let cards = document.querySelector("#cards");
+import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading } from "./componants.js";
+import { showCataloguePage, showMarketPricePage } from "./help.js";
+let main = document.querySelector("main");
 let currency = document.querySelector("#currency");
 let refresh = document.querySelector("#refresh");
-
-addMetalsTitle(cards);
 
 // 
 (async () => {
@@ -15,6 +12,7 @@ addMetalsTitle(cards);
 
 // rerender everything when click 'actualiser'
 refresh.addEventListener("click", async () => {
+  showMarketPricePage(main, marketPricePage, statusHeaderLoading);
   await fetchedAndRendered();
 });
 
@@ -27,6 +25,12 @@ currency.addEventListener("change", async () => {
 document.querySelector("#retry").addEventListener("click", async (e) => {
     await fetchedAndRendered();
 });
+
+// clicking "catalogue"  button should replace the page
+document.querySelector("#catalogue").addEventListener("click", (e)=> {
+  e.preventDefault();
+  showCataloguePage(main, cataloguePage);
+})
 
 // 
 let triggerHistoryListeners = (()=> {
@@ -89,6 +93,8 @@ let triggerEstimateListener = () => {
 
 // fetch and render metals
 async function fetchedAndRendered() {
+  let cards = document.querySelector("#cards");
+  let container = document.querySelector(".container");
   refresh.disabled = true;
   currency.disabled = true;
   startLoadingStatus();

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mizan — Cours de l'or et de l'argent</title>
+    <title>oryven</title>
     <link rel="stylesheet" href="css/style.css" />
     <script type="module" src="js/main.js" defer></script>
   </head>
@@ -12,13 +12,14 @@
     <header class="topbar">
       <h1>Oryven</h1>
       <div class="cntrls">
-        <label for="currency">Devise</label>
+        <label for="currency" class="currencylabel">Devise</label>
         <select id="currency">
           <option value="MAD">MAD</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
         </select>
-        <button id="refresh" type="button">Actualiser</button>
+        <button id="refresh" type="button">Cours des métaux</button>
+        <button id="catalogue" type="button">Catalogue</button>
       </div>
     </header>
 
@@ -31,7 +32,7 @@
 
     <main>
       <!-- metals -->
-      <section>
+      <section class="oryven">
         <div id="cards" class="cards"></div>
         <div class="container"></div>
       </section>
