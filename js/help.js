@@ -19,6 +19,9 @@ export function showMarketPricePage(main, marketPricePageFn, statusHeaderLoading
 
 // the main page that show the catalogue page 
 export function showCataloguePage(main, cataloguePageFn) {
+  let e = document.querySelector("#catalogue-page");
+  if (e) e.remove();
+
   let marcketpage = document.querySelector(".oryven");
   if (marcketpage) {
     marcketpage.remove();

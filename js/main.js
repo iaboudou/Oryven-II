@@ -5,35 +5,45 @@ let main = document.querySelector("main");
 let currency = document.querySelector("#currency");
 let refresh = document.querySelector("#refresh");
 
-// 
+//
 (async () => {
+  let page = localStorage.getItem("oryven-page");
+  if (page === "catalogue") {
+    showCataloguePage(main, cataloguePage);
+    return;
+  }
   await fetchedAndRendered();
 })();
 
 // rerender everything when click 'actualiser'
 refresh.addEventListener("click", async () => {
+  localStorage.setItem("oryven-page", "pricepage");
   showMarketPricePage(main, marketPricePage, statusHeaderLoading);
   await fetchedAndRendered();
 });
 
 // rerender everything when the currency changed
 currency.addEventListener("change", async () => {
+  localStorage.setItem("oryven-page", "pricepage");
   await fetchedAndRendered();
 });
 
 // try to fetch  again when click button retry 
-document.querySelector("#retry").addEventListener("click", async (e) => {
-    await fetchedAndRendered();
+document.addEventListener("click", async (e) => {
+  if (!e.target.matches("#retry")) return;
+  localStorage.setItem("oryven-page", "pricepage");
+  await fetchedAndRendered();
 });
 
 // clicking "catalogue"  button should replace the page
 document.querySelector("#catalogue").addEventListener("click", (e)=> {
   e.preventDefault();
+  localStorage.setItem("oryven-page", "catalogue");
   showCataloguePage(main, cataloguePage);
 })
 
-// 
-let triggerHistoryListeners = (()=> {
+//
+function triggerHistoryListeners() {
   let historyMetal = document.querySelector(".history-metal");
   let history7d = document.querySelector(".history-7d");
   let history30d = document.querySelector(".history-30d");
@@ -81,7 +91,7 @@ let triggerHistoryListeners = (()=> {
     chart.innerHTML = "";
     renderHistoryChart(history, "7d", currency.value);
   });
-})
+}
 
 
 let triggerEstimateListener = () => {

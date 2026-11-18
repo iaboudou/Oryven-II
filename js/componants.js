@@ -306,11 +306,8 @@ export function cataloguePage() {
 
   a.innerHTML = `
 <section id="catalogue-page">
-  <header class="catalogue-header">
-    <button id="add-product">Ajouter un article</button>
-  </header>
-
   <div class="catalogue-controls">
+    <button id="add-product">Ajouter un article</button>
     <input type="search" id="search-product"
       placeholder="Rechercher un article..." />
 

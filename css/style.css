@@ -293,3 +293,25 @@ select:disabled {
 .btnEstimate {
   background-color: var(--text);
 }
+
+/* catalogue */
+
+.catalogue-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.catalogue-controls button,
+.catalogue-controls input {
+  height: 40px;
+}
+
+.catalogue-controls button {
+  padding: 0 16px;
+}
+
+.catalogue-controls input {
+  width: 220px;
+}
