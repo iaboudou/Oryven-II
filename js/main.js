@@ -1,10 +1,12 @@
 import { fetchHistory, fetchMetals, request } from "./fetch.js";
-import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading, renderCatalogueItems, addToCatalogue, getFormToAddToCatalogue, showErrorAddToCatalogue } from "./componants.js";
+import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading, renderCatalogueItems, addToCatalogue, getFormToAddToCatalogue, showErrorAddToCatalogue, filterDOMcards, showNoCatalogueItems } from "./componants.js";
 import { showCataloguePage, showMarketPricePage, getCatalogueItems } from "./help.js";
 import { validateFormToAddToCatalogue } from "./validate.js";
 let main = document.querySelector("main");
 let currency = document.querySelector("#currency");
 let refresh = document.querySelector("#refresh");
+let t1;
+const DEBOUNCE_DELAY = 300;
 
 // after reload, check localstorage, and render "cours des mêteau" or catalogue page
 (async () => {
@@ -65,6 +67,18 @@ document.addEventListener("click", async (e) => {
       showErrorAddToCatalogue("Veuillez remplir correctement tous les champs.");
     }
   }
+});
+
+// search catalogue 
+document.addEventListener("input", (e) => {
+  if (e.target.id !== "search-product") return;
+
+  clearTimeout(t1);
+  let value = e.target.value.trim();
+
+  t1 = setTimeout(() => {
+    filterDOMcards(value, request);
+  }, DEBOUNCE_DELAY);
 });
 
 // clicking "catalogue"  button should replace to Catalogue page

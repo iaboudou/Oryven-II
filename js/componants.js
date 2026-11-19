@@ -1,6 +1,7 @@
 // create and return the card element
 
 import { fetchMetals } from "./fetch.js";
+import { getCatalogueItems } from "./help.js";
 
 // calculate the diffence prix percentage between two dates (depend on the range fetched by the query)
 export function metalCard(metal) {
@@ -429,4 +430,35 @@ export async function addToCatalogue(request, data) {
   document.querySelector("#product-form").reset();
 
   return true;
+}
+
+// show no exiting element when filtring return nothing
+export function showNoCatalogueItems(noItems) {
+  let status = document.querySelector("#catalogue-status");
+  if (status) {
+    status.textContent = noItems ? "Aucun article trouvé" : "";
+  }
+}
+
+
+// filter catalogue elements based on the title
+export async function filterDOMcards(str, request) {
+  let cardsCollection = document.querySelector("#products-list");
+  if (!cardsCollection) return;
+
+  cardsCollection.innerHTML = "";
+
+  let items = await getCatalogueItems(request);
+
+  if (!Array.isArray(items)) {
+    showNoCatalogueItems(true);
+    return;
+  }
+
+  let filtered = items.filter(e =>
+    e.title.toString().toLowerCase().includes(str.toLowerCase())
+  );
+
+  renderCatalogueItems(filtered);
+  showNoCatalogueItems(filtered.length === 0);
 }
