@@ -179,17 +179,17 @@ export function renderHistoryChart(points, days, currency) {
   let label1 = document.querySelector(".label1");
   let label2 = document.querySelector(".label2");
   let label3 = document.querySelector(".label3");
-  let label4 = document.querySelector(".label4")
+  let label4 = document.querySelector(".label4");
   let label_days5 = document.querySelector(".label-days5");
   let label_days6 = document.querySelector(".label-days6");
   let label_days7 = document.querySelector(".label-days7");
 
-  
+
   let fmt = (v) => (v >= 10 ? Math.floor(v) : v.toFixed(1));
   label1.textContent = fmt(maxPrice * 0.25);
   label2.textContent = fmt(maxPrice * 0.5);
   label3.textContent = fmt(maxPrice * 0.75);
-  label4.textContent = `prix en ${currency}`
+  label4.textContent = `prix en ${currency}`;
 
   let d = 30;
   if (days == "30d") {
@@ -203,7 +203,7 @@ export function renderHistoryChart(points, days, currency) {
     label_days7.textContent = 6;
   }
 
-  
+
   // calculate the exact (x, y) points will be rendred
   let pts = [];
   let shown = points.slice(-d);
@@ -330,10 +330,11 @@ export function cataloguePage() {
   <dialog id="product-modal">
     <form id="product-form">
       <h3 id="form-title">Ajouter un article</h3>
+      <p id="form-error" class="form-error"></p>
       <input id="product-title" type="text" placeholder="Titre" required />
       <textarea id="product-description" placeholder="Description" required></textarea>
       <input id="product-price" type="number" placeholder="Prix" required />
-      <button type="submit">Enregistrer</button>
+      <button type="button" id="save-product">Enregistrer</button>
       <button type="button" id="cancel-product">Annuler</button>
     </form>
   </dialog>
@@ -367,7 +368,7 @@ export function renderCatalogueItems(items) {
     description.textContent = ele.description;
 
     let price = document.createElement("p");
-    price.textContent = ele.price;
+    price.textContent = ele.price + " MAD";
 
     let status = document.createElement("p");
     status.textContent = ele.status;
@@ -375,4 +376,57 @@ export function renderCatalogueItems(items) {
     card.append(title, description, price, status);
     container.append(card);
   });
+}
+
+//
+export function getFormToAddToCatalogue() {
+  let title = document.querySelector("#product-title").value.trim();
+  let description = document.querySelector("#product-description").value.trim();
+  let price = document.querySelector("#product-price").value.trim();
+
+  return { title, description, price };
+}
+
+//
+export function showErrorAddToCatalogue(text) {
+  let err = document.querySelector("#form-error");
+  if (err) {
+    err.textContent = text;
+  }
+}
+
+//
+export async function addToCatalogue(request, data) {
+  let response = await request("/items", {
+    method: "POST",
+    body: JSON.stringify({ title: data.title, description: data.description, price: data.price, status: "Disponible" }),
+  });
+
+  if (!response.is_resolved) {
+    return false;
+  }
+
+  let item = response.resultat;
+  let listElement = document.querySelector("#products-list");
+
+  let card = document.createElement("div");
+  card.className = "product-card";
+
+  let titleElement = document.createElement("h3");
+  titleElement.textContent = item.title;
+
+  let descriptionElement = document.createElement("p");
+  descriptionElement.textContent = item.description;
+
+  let priceElement = document.createElement("p");
+  priceElement.textContent = item.price;
+
+  let statusElement = document.createElement("p");
+  statusElement.textContent = item.status || "Disponible";
+
+  card.append(titleElement, descriptionElement, priceElement, statusElement);
+  listElement.insertBefore(card, listElement.firstChild);
+  document.querySelector("#product-form").reset();
+
+  return true;
 }

@@ -1,6 +1,7 @@
 import { fetchHistory, fetchMetals, request } from "./fetch.js";
-import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading, renderCatalogueItems } from "./componants.js";
+import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading, renderCatalogueItems, addToCatalogue, getFormToAddToCatalogue, showErrorAddToCatalogue } from "./componants.js";
 import { showCataloguePage, showMarketPricePage, getCatalogueItems } from "./help.js";
+import { validateFormToAddToCatalogue } from "./validate.js";
 let main = document.querySelector("main");
 let currency = document.querySelector("#currency");
 let refresh = document.querySelector("#refresh");
@@ -12,13 +13,12 @@ let refresh = document.querySelector("#refresh");
     showCataloguePage(main, cataloguePage, startLoadingStatus);
     let catalogueData = await getCatalogueItems(request)
     renderCatalogueItems(catalogueData)
-    console.log(catalogueData)
     return;
   }
   await fetchedAndRendered();
 })();
 
-// rerender everything when click 'actualiser'
+// rerender everything when click 'cours des mêteau'
 refresh.addEventListener("click", async () => {
   localStorage.setItem("oryven-page", "pricepage");
   showMarketPricePage(main, marketPricePage, statusHeaderLoading);
@@ -31,11 +31,40 @@ currency.addEventListener("change", async () => {
   await fetchedAndRendered();
 });
 
-// try to fetch  again when click button retry 
 document.addEventListener("click", async (e) => {
-  if (!e.target.matches("#retry")) return;
-  localStorage.setItem("oryven-page", "pricepage");
-  await fetchedAndRendered();
+  e.preventDefault();
+
+  // try to fetch  again when click button retry in <cours des mêteau>
+  if (e.target.id === "retry") {
+    localStorage.setItem("oryven-page", "pricepage");
+    await fetchedAndRendered();
+  }
+
+  // when clicking add-product in catalogue page should show the modal
+  if (e.target.id === "add-product") {
+    document.querySelector("#product-modal").showModal();
+  }
+
+  // when clicking cancel in catalogue form should reset fields and close modal
+  if (e.target.id === "cancel-product") {
+    let form = document.querySelector("#product-form");
+    if (form) {
+      form.reset();
+    }
+    showErrorAddToCatalogue("");
+    document.querySelector("#product-modal").close();
+  }
+
+  // when clicking save-product in catalogue form should add item 
+  if (e.target.id === "save-product") {
+    let data = getFormToAddToCatalogue();
+    if (validateFormToAddToCatalogue(data)) {
+      await addToCatalogue(request, data);
+      document.querySelector("#product-modal").close();
+    } else {
+      showErrorAddToCatalogue("Veuillez remplir correctement tous les champs.");
+    }
+  }
 });
 
 // clicking "catalogue"  button should replace to Catalogue page

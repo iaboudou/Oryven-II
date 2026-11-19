@@ -7,6 +7,7 @@
   --second: rgb(238, 238, 238);
   --up: #009c00;
   --down: #c0392b;
+  --third: rgb(182, 182, 182);
 }
 
 * {
@@ -373,5 +374,99 @@ select:disabled {
     flex: none;
     width: 100%;
     text-align: left;
+  }
+}
+
+/* add element to catalogue  */
+
+.form-error {
+  color: var(--down);
+  font-size: 0.85rem;
+  min-height: 3em;
+  margin: 6px 0 10px 0;
+  text-align: left;
+}
+
+
+#product-modal {
+  width: 400px;
+  max-width: 90%;
+  padding: 25px;
+  border: none;
+  border-radius: 12px;
+}
+
+#product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#product-form h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+#product-form input,
+#product-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--third);
+  border-radius: 8px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+#product-form button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#save-product {
+  background: var(--text);
+  color: var(--bg);
+}
+
+#cancel-product {
+  background: var(--bg);
+  color: var(--text);
+}
+
+@media (max-width: 600px) {
+  #product-modal {
+    padding: 15px;
+  }
+  #product-form {
+    gap: 12px;
+  }
+  #product-form h3 {
+    font-size: 20px;
+    margin: 0 0 8px 0;
+  }
+  #product-form input,
+  #product-form textarea {
+    padding: 10px;
+  }
+  #product-form button {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  #product-modal {
+    padding: 12px;
+  }
+  #product-form h3 {
+    font-size: 18px;
+  }
+  #product-form input,
+  #product-form textarea {
+    padding: 9px;
+  }
+  #product-form button {
+    padding: 9px;
   }
 }

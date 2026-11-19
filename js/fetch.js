@@ -103,6 +103,9 @@ export async function request(path, options = {}) {
     }
 
     let json = await res.json();
+    if (Array.isArray(json)) {
+      json.reverse();
+    }
     return { is_resolved: true, resultat: json };
 
   } catch (er) {
