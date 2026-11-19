@@ -1,15 +1,18 @@
-import { fetchHistory, fetchMetals } from "./fetch.js";
-import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading } from "./componants.js";
-import { showCataloguePage, showMarketPricePage } from "./help.js";
+import { fetchHistory, fetchMetals, request } from "./fetch.js";
+import { startLoadingStatus, endLoadingStatus, metalCard, chartbase, renderHistoryChart, estamateHTML, estimate, cataloguePage, marketPricePage, statusHeaderLoading, renderCatalogueItems } from "./componants.js";
+import { showCataloguePage, showMarketPricePage, getCatalogueItems } from "./help.js";
 let main = document.querySelector("main");
 let currency = document.querySelector("#currency");
 let refresh = document.querySelector("#refresh");
 
-//
+// after reload, check localstorage, and render "cours des mêteau" or catalogue page
 (async () => {
   let page = localStorage.getItem("oryven-page");
   if (page === "catalogue") {
-    showCataloguePage(main, cataloguePage);
+    showCataloguePage(main, cataloguePage, startLoadingStatus);
+    let catalogueData = await getCatalogueItems(request)
+    renderCatalogueItems(catalogueData)
+    console.log(catalogueData)
     return;
   }
   await fetchedAndRendered();
@@ -35,11 +38,13 @@ document.addEventListener("click", async (e) => {
   await fetchedAndRendered();
 });
 
-// clicking "catalogue"  button should replace the page
-document.querySelector("#catalogue").addEventListener("click", (e)=> {
+// clicking "catalogue"  button should replace to Catalogue page
+document.querySelector("#catalogue").addEventListener("click", async(e)=> {
   e.preventDefault();
   localStorage.setItem("oryven-page", "catalogue");
-  showCataloguePage(main, cataloguePage);
+  showCataloguePage(main, cataloguePage, startLoadingStatus);
+  let catalogueData = await getCatalogueItems(request)
+  renderCatalogueItems(catalogueData)
 })
 
 //
@@ -63,6 +68,7 @@ function triggerHistoryListeners() {
   });
   
   // when a click happen to bring 30 days history should fetch again and render the received data
+  // this is for "cours des mêteau" page
   history30d?.addEventListener("click", async (e) => {
     e.preventDefault();
   
@@ -101,7 +107,7 @@ let triggerEstimateListener = () => {
   });
 }
 
-// fetch and render metals
+// fetch and render metals exist in "cours des mêteau" page
 async function fetchedAndRendered() {
   let cards = document.querySelector("#cards");
   let container = document.querySelector(".container");
@@ -117,9 +123,9 @@ async function fetchedAndRendered() {
     currency.disabled = false;
     return false;
   } else {
-    //
+    // "cours des mêteau" page
     endLoadingStatus(fetchedmetals, true);
-    // history
+    // history in "cours des mêteau" page
     container.append(chartbase());
     triggerHistoryListeners();
     let fetchedhistoory = await fetchHistory("xau", "1mo");
@@ -128,7 +134,7 @@ async function fetchedAndRendered() {
     } else {
       renderHistoryChart(fetchedhistoory, "30d", currency.value);
     }
-    // estimation
+    // estimation in "cours des mêteau" page
     container.append(estamateHTML())
     triggerEstimateListener()
   }

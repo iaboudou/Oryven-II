@@ -348,3 +348,31 @@ export function cataloguePage() {
 
   return a;
 }
+
+// takes param "item",  witch is the data fetched from db.json and it render it
+export function renderCatalogueItems(items) {
+  let container = document.querySelector("#products-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  items.forEach((ele) => {
+    let card = document.createElement("div");
+    card.className = "product-card";
+
+    let title = document.createElement("h3");
+    title.textContent = ele.title;
+
+    let description = document.createElement("p");
+    description.textContent = ele.description;
+
+    let price = document.createElement("p");
+    price.textContent = ele.price;
+
+    let status = document.createElement("p");
+    status.textContent = ele.status;
+
+    card.append(title, description, price, status);
+    container.append(card);
+  });
+}
