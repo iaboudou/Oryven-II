@@ -5,14 +5,14 @@
       "title": "Bague en or",
       "description": "Bague en or 18 carats",
       "price": 2500,
-      "status": "available"
+      "status": "Disponible"
     },
     {
       "id": 2,
       "title": "Lingot d'argent",
       "description": "Lingot d'argent de 100 grammes",
       "price": 1200,
-      "status": "Non available"
+      "status": "Réservé"
     }
   ]
 }

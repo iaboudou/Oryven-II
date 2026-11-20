@@ -13,8 +13,12 @@ const DEBOUNCE_DELAY = 300;
   let page = localStorage.getItem("oryven-page");
   if (page === "catalogue") {
     showCataloguePage(main, cataloguePage, startLoadingStatus);
-    let catalogueData = await getCatalogueItems(request)
-    renderCatalogueItems(catalogueData)
+    let savedStatus = localStorage.getItem("catalogue-filter-status");
+    let filterSelect = document.querySelector("#filter-status");
+    if (filterSelect && savedStatus) {
+      filterSelect.value = savedStatus;
+    }
+    filterDOMcards("", savedStatus || "all", request);
     return;
   }
   await fetchedAndRendered();
@@ -75,10 +79,23 @@ document.addEventListener("input", (e) => {
 
   clearTimeout(t1);
   let value = e.target.value.trim();
+  let status = document.querySelector("#filter-status").value;
 
   t1 = setTimeout(() => {
-    filterDOMcards(value, request);
+    filterDOMcards(value, status, request);
   }, DEBOUNCE_DELAY);
+});
+
+// save status filter value to localStorage on each change
+document.addEventListener("change", (e) => {
+  if (e.target.id === "filter-status") {
+    localStorage.setItem("catalogue-filter-status", e.target.value);
+    let value = document.querySelector("#search-product").value.trim();
+    filterDOMcards(value, e.target.value, request);
+  }
+  if (e.target.id === "sort-products") {
+    localStorage.setItem("oryven-sort", e.target.value);
+  }
 });
 
 // clicking "catalogue"  button should replace to Catalogue page
@@ -86,8 +103,12 @@ document.querySelector("#catalogue").addEventListener("click", async(e)=> {
   e.preventDefault();
   localStorage.setItem("oryven-page", "catalogue");
   showCataloguePage(main, cataloguePage, startLoadingStatus);
-  let catalogueData = await getCatalogueItems(request)
-  renderCatalogueItems(catalogueData)
+  let savedStatus = localStorage.getItem("catalogue-filter-status");
+  let filterSelect = document.querySelector("#filter-status");
+  if (filterSelect && savedStatus) {
+    filterSelect.value = savedStatus;
+  }
+  filterDOMcards("", savedStatus || "all", request);
 })
 
 //

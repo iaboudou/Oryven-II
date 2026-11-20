@@ -314,8 +314,8 @@ export function cataloguePage() {
 
     <select id="filter-status">
       <option value="all">Tous les statuts</option>
-      <option value="available">Disponible</option>
-      <option value="reserved">Réservé</option>
+      <option value="Disponible">Disponible</option>
+      <option value="Réservé">Réservé</option>
     </select>
 
     <select id="sort-products">
@@ -441,8 +441,8 @@ export function showNoCatalogueItems(noItems) {
 }
 
 
-// filter catalogue elements based on the title
-export async function filterDOMcards(str, request) {
+// filter catalogue elements based on the title and the status
+export async function filterDOMcards(str, status, request) {
   let cardsCollection = document.querySelector("#products-list");
   if (!cardsCollection) return;
 
@@ -454,10 +454,11 @@ export async function filterDOMcards(str, request) {
     showNoCatalogueItems(true);
     return;
   }
+let filtered = items.filter(e => {
+  if (status !== "all" && e.status !== status) return false;
 
-  let filtered = items.filter(e =>
-    e.title.toString().toLowerCase().includes(str.toLowerCase())
-  );
+  return e.title.toLowerCase().includes(str.toLowerCase());
+});
 
   renderCatalogueItems(filtered);
   showNoCatalogueItems(filtered.length === 0);
